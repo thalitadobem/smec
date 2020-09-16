@@ -114,6 +114,7 @@ initial <- list(betas=betasI,sigma2=sigma2I,alphas=alphasI,phi1=phi1I,phi2=phi2I
 
 ## UNC - uncorrelated 
 
+set.seed(6987)
 fitunc <- nsmec(y=y, cc=cc, x=x, z=z, tt=tt, ttc=ttc, nj=nj, LL=LL, LU=LU, Ns=Ns, initial=initial, struc="unc", lambda.fixed=FALSE, iter.max=200,precision=1e-6)
 
 # Estimate
@@ -131,6 +132,7 @@ round(sqrt(diag(solve(fitunc$Infbetasff))),4)
 
 ## DEC 
 
+set.seed(6987)
 fitdec <- nsmec(y=y, cc=cc, x=x, z=z, tt=tt, ttc=ttc, nj=nj, LL=LL, LU=LU, Ns=Ns, initial=initial, struc="dec", lambda.fixed=FALSE, iter.max=200,precision=1e-6)
 
 # Estimate
@@ -147,16 +149,27 @@ round(fitdec$AICp,4)
 # SE
 round(sqrt(diag(solve(fitdec$Infbetasff))),4)
 
+# ----------------- 
+
+yest_dec <- fitdec$yest
+
+MAEs <- sum(abs(y - yest_dec))/length(y) 
+round(MAEs,4)
+
+MSEs <- sum((y - yest_dec)^2)/length(y)
+round(MSEs,4)
+ 
 
 ## AR(1)
 
+set.seed(6987)
 fitar <- nsmec(y=y, cc=cc, x=x, z=z, tt=tt, ttc=ttc, nj=nj, LL=LL, LU=LU, Ns=Ns, initial=initial, struc="ar", lambda.fixed=FALSE, iter.max=200,precision=1e-6)
 
 # Estimate
 round(fitar$beta1,4)
 round(fitar$ff,4)
 round(fitar$sigmae,4)
-round(fitar$dd,4)
+round(fitar$dd,5)
 round(fitar$phi1,4)
 round(fitar$phi2,4)
 round(fitar$lambda,4)
@@ -169,6 +182,7 @@ round(sqrt(diag(solve(fitar$Infbetasff))),4)
 
 ## CS
 
+set.seed(6987)
 fitcs <- nsmec(y=y, cc=cc, x=x, z=z, tt=tt, ttc=ttc, nj=nj, LL=LL, LU=LU, Ns=Ns, initial=initial, struc="sym", lambda.fixed=FALSE, iter.max=200,precision=1e-6)
 
 # Estimate

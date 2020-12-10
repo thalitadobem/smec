@@ -109,10 +109,12 @@ nsmec <- function(y,  # vector of responses (Nx1)
   loglik <- loglikslmec(y=y,cc=cc,x=x,z=z,Ns=Ns,ttc=ttc,nj=nj,LL=LL,LU=LU,betas=beta1,ff=ff,sigmae=sigmae,D1=D1,phi1=phi1,phi2=phi2,struc=struc)
   loglikp <- as.numeric(loglik - 0.5*lambda*(t(ff)%*%K%*%ff)) 
   
-  while((criterio > precision)&(count < iter.max)){
+  while(criterio > precision){
     
     count <- count + 1
 
+    #print(count)
+    
     soma1 <- matrix(0,q1,q1)
     soma2 <- 0
     soma3 <- matrix(0,p,p)
@@ -133,7 +135,7 @@ nsmec <- function(y,  # vector of responses (Nx1)
     uyyi <- matrix(0,N,N)
     uyi <- matrix(0,N,m)
     
-    ver <- matrix(0,m,1)
+    #ver <- matrix(0,m,1)
     
     Zdiag <- matrix(0,N,m2)
     OMEGAdiag <- Vy <- matrix(0,N,N)
@@ -177,7 +179,7 @@ nsmec <- function(y,  # vector of responses (Nx1)
         ubb <- (ubb + t(ubb))/2
         uyb <- (uyy-uy%*%t(muii))%*%t(Lambda1%*%(t(z1)*(1/sigmae))%*%invGama)
         
-        ver[j,] <- mvtnorm::dmvnorm(x = as.vector(y1),mean = as.vector(muii),sigma = SIGMA)
+        #ver[j,] <- mvtnorm::dmvnorm(x = as.vector(y1),mean = as.vector(muii),sigma = SIGMA)
       }
       
       if(sum(cc1)>=1)
@@ -185,7 +187,7 @@ nsmec <- function(y,  # vector of responses (Nx1)
         
         if(sum(cc1)==nj[j])
         {
-          muiic = W1%*%gamma1
+          muiic <- W1%*%gamma1
           Sc <- SIGMA
           Sc <- (Sc + t(Sc))/2
           
@@ -197,7 +199,7 @@ nsmec <- function(y,  # vector of responses (Nx1)
           ubb <- Lambda1 + (Lambda1%*%(t(z1)*(1/sigmae))%*%invGama)%*%(uyy-uy%*%t(muii)-muii%*%t(uy)+muii%*%t(muii))%*%t(Lambda1%*%(t(z1)*(1/sigmae))%*%invGama)
           uyb <- (uyy-uy%*%t(muii))%*%t(Lambda1%*%(t(z1)*(1/sigmae))%*%invGama)
           
-          ver[j,] <- mvtnorm::pmvnorm(lower = LL1,upper = LU1,mean = as.vector(muiic),sigma = Sc)[1]
+          #ver[j,] <- mvtnorm::pmvnorm(lower = LL1,upper = LU1,mean = as.vector(muiic),sigma = Sc)[1]
         }
         else{
           muiic <- W1[cc1==1,]%*%gamma1 + SIGMA[cc1==1,cc1==0]%*%solve(SIGMA[cc1==0,cc1==0])%*%(y1[cc1==0]-W1[cc1==0,]%*%gamma1)
@@ -222,7 +224,7 @@ nsmec <- function(y,  # vector of responses (Nx1)
           ubb <- (ubb + t(ubb))/2
           uyb <- (uyy-uy%*%t(muii))%*%t(Lambda1%*%(t(z1)*(1/sigmae))%*%invGama)
           
-          ver[j,] <- dmvnorm(x = as.vector(y1[cc1==0]),mean = as.vector(muii[cc1==0]),sigma = as.matrix(SIGMA[cc1==0,cc1==0]))*as.numeric(mvtnorm::pmvnorm(lower = as.vector(LL1c),upper = as.vector(LU1c),mean =  as.vector(muiic), sigma = as.matrix(Sc))[1])
+          #ver[j,] <- dmvnorm(x = as.vector(y1[cc1==0]),mean = as.vector(muii[cc1==0]),sigma = as.matrix(SIGMA[cc1==0,cc1==0]))*as.numeric(mvtnorm::pmvnorm(lower = as.vector(LL1c),upper = as.vector(LU1c),mean =  as.vector(muiic), sigma = as.matrix(Sc))[1])
         }
         
       } #end if sum(cc1)>=1
@@ -340,8 +342,8 @@ nsmec <- function(y,  # vector of responses (Nx1)
     loglik1 <- loglikslmec(y=y,cc=cc,x=x,z=z,Ns=Ns,ttc=ttc,nj=nj,LL=LL,LU=LU,betas=beta1,ff=ff,sigmae=sigmae,D1=D1,phi1=phi1,phi2=phi2,struc=struc)
     loglikp1 <- as.numeric(loglik1 - 0.5*lambda*(t(ff)%*%K%*%ff)) 
     
-    if(count > 1){criterio <- sqrt(((loglikp1/loglikp)-1)%*%((loglikp1/loglikp)-1))}
-    #if(count > 1){criterio <- sqrt(((teta1/teta)-1)%*%((teta1/teta)-1))}
+    #if(count > 1){criterio <- sqrt(((loglikp1/loglikp)-1)%*%((loglikp1/loglikp)-1))}
+    if(count > 1){criterio <- sqrt(((teta1/teta)-1)%*%((teta1/teta)-1))}
     if(count==iter.max){criterio <- precision*0.0001}
     
     teta <- teta1
